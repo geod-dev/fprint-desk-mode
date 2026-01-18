@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+cp /etc/pam.d/system-auth /etc/pam.d/system-auth.bak
+echo "[fprint-desk-mode] Backup saved: /etc/pam.d/system-auth.bak"
+
+if output=$(python /usr/share/fprint-desk-mode/get_configured_system_auth.py 2>&1); then
+    echo "$output" > /etc/pam.d/system-auth
+    echo "[fprint-desk-mode] system-auth successfully updated for desk-mode."
+else
+    echo "[fprint-desk-mode] Failed to auto-update system-auth for desk-mode."
+    echo "[fprint-desk-mode] To enable desk-mode, please manually edit /etc/pam.d/system-auth:"
+    echo "  Add the following line to the 'auth' section related to fprintd:"
+    echo "  auth    [success=1 default=ignore]  pam_exec.so /usr/bin/fprint_desk_mode"
+fi

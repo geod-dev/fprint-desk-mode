@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Install
+Type = Package
+Target = fprint-desk-mode
+
+[Action]
+Description = Updating system-auth with fprint-conditional-keyboard output
+When = PostTransaction
+Exec = /usr/bin/fdm_post_install

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Check for external (USB) keyboards on Arch Linux
+# Returns 0 if external keyboard found, 1 otherwise
+
+found_external=0
+
+while IFS= read -r line; do
+    case "$line" in
+        I:*)
+            # Reset for new device
+            current_name=""
+            current_phys=""
+            current_handlers=""
+            ;;
+        N:*)
+            # Extract device name
+            current_name="${line#*Name=\"}"
+            current_name="${current_name%\"}"
+            ;;
+        P:*)
+            # Extract physical path
+            current_phys="${line#*Phys=}"
+            ;;
+        H:*)
+            # Store handlers line
+            current_handlers="$line"
+
+            # Check if this is an external keyboard
+            if [[ "$current_handlers" == *"kbd"* ]] && \
+               [[ "$current_phys" == *"usb"* ]] && \
+               [[ "$current_handlers" != *"mouse"* ]]; then
+
+                # Exclude obvious non-keyboards by name
+                if [[ "$current_name" != *"Mouse"* ]] && \
+                   [[ "$current_name" != *"Audio"* ]] && \
+                   [[ "$current_name" != *"Consumer Control"* ]]; then
+                    found_external=1
+                    break
+                fi
+            fi
+            ;;
+    esac
+done < /proc/bus/input/devices
+
+exit $((1 - found_external))

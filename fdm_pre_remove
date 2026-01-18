@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+if output=$(python /usr/share/fprint-desk-mode/get_unconfigured_system_auth.py 2>&1); then
+    echo "$output" > /etc/pam.d/system-auth
+    echo "[fprint-desk-mode] system-auth successfully updated to remove desk-mode."
+else
+    echo "[fprint-desk-mode] Failed to auto-update system-auth to remove desk-mode."
+    echo "[fprint-desk-mode] You can manually restore the system-auth by executing:"
+    echo "[fprint-desk-mode] >> mv /etc/pam.d/system-auth.bak /etc/pam.d/system-auth"
+fi

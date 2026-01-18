@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Remove
+Type = Package
+Target = fprint-desk-mode
+
+[Action]
+Description = Restoring system-auth
+When = PreTransaction
+Exec = /usr/bin/fdm_pre_remove
